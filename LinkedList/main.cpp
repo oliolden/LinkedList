@@ -4,8 +4,9 @@
 
 int main() {
 	LinkedList<int> list = LinkedList<int>();
-	list.AddLast(2);
-	list.AddFirst(0);
-	//list.Add(1, 1);
-	std::cout << list.Size();
+	for (int i = 0; i < 10; i++) {
+		list.AddLast(i);
+	}
+	list.AddBefore(4, 52);
+	list.Print();
 }
