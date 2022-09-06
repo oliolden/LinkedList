@@ -11,7 +11,8 @@ struct Node {
 	}
 
 	T value;
-	Node* next = nullptr;
+	Node* next = &this;
+	Node* prev = &this;
 };
 
 template <typename T>
@@ -29,22 +30,22 @@ public:
 
 		// Set newNode's next node pointer to the current node pointer and replace current pointer with newNode's pointer
 		newNode->next = *current;
+		newNode->prev = (*current)->prev;
+		(*current)->prev = newNode;
 		*current = newNode;
 	}
 
 	void AddFirst(T value) {
 		Node<T>* newNode = new Node<T>(value);
 		newNode->next = head;
+		newNode->prev = head->prev;
 		head = newNode;
 	}
 
 	void AddLast(T value) {
 		Node<T>* newNode = new Node<T>(value);
-		Node<T>** current = &head;
-		while (*current != nullptr) {
-			current = &((*current)->next);
-		}
-		*current = newNode;
+		newNode->next = head;
+		newNode->prev = head->prev;
 	}
 
 	void AddAfter(T node, T value) {
@@ -52,6 +53,7 @@ public:
 		for (Node<T>* i = head; i != nullptr; i = i->next)
 			if (i->value == node) {
 				newNode->next = i->next;
+				newNode->prev = i;
 				i->next = newNode;
 				return;
 			}
@@ -62,14 +64,16 @@ public:
 		for (Node<T>* i = head; i->next != nullptr; i = i->next)
 			if (i->next->value == node) {
 				newNode->next = i->next;
+				newNode->prev = i;
 				i->next = newNode;
 				return;
 			}
 	}
 
 	int Size() {
-		int count = 0;
-		for (Node<T>* i = head; i != nullptr; i = i->next) { count++; }
+		if (head == nullptr) return 0;
+		int count = 1;
+		for (Node<T>* i = head->next; i != head; i = i->next) { count++; }
 		return count;
 	}
 
