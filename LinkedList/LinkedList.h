@@ -124,6 +124,18 @@ public:
 			std::cout << i->value << std::endl;
 	}
 
+	T& operator[](int index) {
+		if (index < 0)
+			throw std::out_of_range("Index was out of range");
+		Node<T>* current = head;
+		for (int i = 0; i < index; i++) {
+			current = current->next;
+			if (current == nullptr)
+				throw std::out_of_range("Index was out of range");
+		}
+		return current->value;
+	}
+
 private:
 	Node<T>* head = nullptr;
 };
