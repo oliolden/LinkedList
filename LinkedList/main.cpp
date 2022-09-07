@@ -3,10 +3,8 @@
 
 int main() {
 	LinkedList<int> list = LinkedList<int>();
-	for (int i = 0; i < 10; i++) {
-		list.AddLast(i);
+	while (true) {
+		list.AddFirst(256);
+		list.Remove(256);
 	}
-	list[2] = 5;
-	std::cout << list[2] << std::endl;
-	list.Print();
 }

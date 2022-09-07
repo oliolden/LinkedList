@@ -11,63 +11,60 @@ struct Node {
 	}
 
 	T value;
-	Node* next = &this;
-	Node* prev = &this;
+	Node<T>* next = this;
+	Node<T>* prev = this;
 };
 
 template <typename T>
 class LinkedList {
 public:
+	// Unfinished:
 	void Add(int index, T value) {
-		Node<T>* newNode = new Node<T>(value);
-		// Get address of head
-		Node<T>** current = &head;
-
-		// Iterate through nodes
-		for (int i = 0; i < index && *current != nullptr; i++) {
-			current = &((*current)->next);
+		if (index == 0) {
+			AddFirst(value);
+			return;
 		}
-
-		// Set newNode's next node pointer to the current node pointer and replace current pointer with newNode's pointer
-		newNode->next = *current;
-		newNode->prev = (*current)->prev;
-		(*current)->prev = newNode;
-		*current = newNode;
+		Node<T>* current = head;
+		int i = 1;
+		while (current != head && i < index) {
+			current = current->next;
+			i++
+		}
 	}
 
 	void AddFirst(T value) {
 		Node<T>* newNode = new Node<T>(value);
+		if (head == nullptr) { head = newNode; return; }
+		head->prev->next = newNode;
 		newNode->next = head;
 		newNode->prev = head->prev;
+		head->prev = newNode;
 		head = newNode;
 	}
 
 	void AddLast(T value) {
-		Node<T>* newNode = new Node<T>(value);
-		newNode->next = head;
-		newNode->prev = head->prev;
+		AddAfter(head->prev, value);
 	}
 
 	void AddAfter(T node, T value) {
-		Node<T>* newNode = new Node<T>(value);
-		for (Node<T>* i = head; i != nullptr; i = i->next)
-			if (i->value == node) {
-				newNode->next = i->next;
-				newNode->prev = i;
-				i->next = newNode;
+		Node<T>* current = head;
+		do {
+			if (current->value == node) {
+				AddAfter(current, value);
 				return;
 			}
+		} while (current != head);
 	}
 
 	void AddBefore(T node, T value) {
-		Node<T>* newNode = new Node<T>(value);
-		for (Node<T>* i = head; i->next != nullptr; i = i->next)
-			if (i->next->value == node) {
-				newNode->next = i->next;
-				newNode->prev = i;
-				i->next = newNode;
+		if (head->value == node) { AddFirst(value); return; }
+		Node<T>* current = head;
+		do {
+			if (current->next->value == node) {
+				AddAfter(current, value);
 				return;
 			}
+		} while (current != head);
 	}
 
 	int Size() {
@@ -78,24 +75,19 @@ public:
 	}
 
 	bool Contains(T value) {
-		for (Node<T>* i = head; i != nullptr; i = i->next)
+		if (head == value) return true;
+		for (Node<T>* i = head->next; i != head; i = i->next)
 			if (i->value == value) return true;
 		return false;
 	}
 
 	bool Remove(T value) {
-		Node<T>** prev = nullptr;
-		for (Node<T>* i = head; i != nullptr; i = i->next) {
-			if (i->value == value) {
-				if (prev != nullptr)
-					(*prev)->next = i->next;
-				else
-					head = i->next;
-				delete i;
-				return true;
+		Node<T>* current = head;
+		do {
+			if (current->value == value) {
+				return DeleteNode(current);
 			}
-			prev = &i;
-		}
+		} while (current != head);
 		return false;
 	}
 
@@ -104,30 +96,29 @@ public:
 	}
 
 	T GetLast() {
-		Node<T>* current = head;
-		while (current->next != nullptr) {
-			current = current->next;
-		}
-		if (current == nullptr) return NULL;
-		else return current->value;
+		return head->prev;
 	}
 
 	void Clear() {
-		Node<T>* current = head;
-		Node<T>* next = nullptr;
-		while (current != nullptr) {
-			next = current->next;
-			delete current;
-			current = next;
+		Node<T>* current = head->next;
+		while (current != head) {
+			current = current->next;
+			delete current->prev;
 		}
+		delete head;
 		head = nullptr;
 	}
 
 	void Print() {
-		for (Node<T>* i = head; i != nullptr; i = i->next)
-			std::cout << i->value << std::endl;
+		if (head == nullptr) return;
+		Node<T>* current = head;
+		do {
+			std::cout << current->value << std::endl;
+			current = current->next;
+		} while (current != head);
 	}
 
+	// Unfinished:
 	T& operator[](int index) {
 		if (index < 0)
 			throw std::out_of_range("Index was out of range");
@@ -142,5 +133,24 @@ public:
 
 private:
 	Node<T>* head = nullptr;
+
+	bool DeleteNode(Node<T>* node) {
+		node->prev->next = node->next;
+		node->next->prev = node->prev;
+		delete node;
+		return true;
+	}
+
+	void AddAfter(Node<T>* node, T value) {
+		Node<T>* newNode = new Node<T>(value);
+		if (head == nullptr) {
+			head = newNode;
+			return;
+		}
+		node->next->prev = newNode;
+		newNode->next = node->next;
+		node->next = newNode;
+		newNode->prev = node;
+	}
 };
 
