@@ -18,18 +18,19 @@ struct Node {
 template <typename T>
 class LinkedList {
 public:
-	// Unfinished:
 	void Add(int index, T value) {
-		if (index == 0) {
+
+		Node<T>* current = head;
+		int i = 0;
+		while (i < index - 1) {
+			current = current->next;
+			i++;
+		}
+		if (current == head) {
 			AddFirst(value);
 			return;
 		}
-		Node<T>* current = head;
-		int i = 1;
-		while (current != head && i < index) {
-			current = current->next;
-			i++
-		}
+		AddAfter(current, value);
 	}
 
 	void AddFirst(T value) {
@@ -43,6 +44,10 @@ public:
 	}
 
 	void AddLast(T value) {
+		if (head == nullptr) {
+			head = new Node<T>(value);
+			return;
+		}
 		AddAfter(head->prev, value);
 	}
 
@@ -118,15 +123,12 @@ public:
 		} while (current != head);
 	}
 
-	// Unfinished:
 	T& operator[](int index) {
-		if (index < 0)
-			throw std::out_of_range("Index was out of range");
 		Node<T>* current = head;
-		for (int i = 0; i < index; i++) {
+		int i = 0;
+		while (i < index) {
 			current = current->next;
-			if (current == nullptr)
-				throw std::out_of_range("Index was out of range");
+			i++;
 		}
 		return current->value;
 	}
