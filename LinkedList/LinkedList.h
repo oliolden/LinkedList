@@ -58,6 +58,7 @@ public:
 				AddAfter(current, value);
 				return;
 			}
+			current = current->next;
 		} while (current != head);
 	}
 
@@ -69,6 +70,7 @@ public:
 				AddAfter(current, value);
 				return;
 			}
+			current = current->next;
 		} while (current != head);
 	}
 
@@ -80,7 +82,7 @@ public:
 	}
 
 	bool Contains(T value) {
-		if (head == value) return true;
+		if (head->value == value) return true;
 		for (Node<T>* i = head->next; i != head; i = i->next)
 			if (i->value == value) return true;
 		return false;
