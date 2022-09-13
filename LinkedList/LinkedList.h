@@ -137,8 +137,15 @@ private:
 	Node<T>* head = nullptr;
 
 	bool DeleteNode(Node<T>* node) {
+		if (Size() <= 1) {
+			delete head;
+			head = nullptr;
+			return true;
+		}
 		node->prev->next = node->next;
 		node->next->prev = node->prev;
+		if (node == head)
+			head = head->next;
 		delete node;
 		return true;
 	}
